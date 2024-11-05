@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EncryptionLib\EncryptionLib.csproj" />
     <ProjectReference Include="..\Project.WebApi.ServiceDefaults\Project.WebApi.ServiceDefaults.csproj" />
   </ItemGroup>
 

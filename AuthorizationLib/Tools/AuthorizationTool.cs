@@ -22,7 +22,7 @@ namespace AuthorizationLib.Tools
             {
                 var username = user.Identity?.Name;
 
-                if (username == null)
+                if (username is null)
                     throw new Exception("Invalid identity");
 
                 User? authedUser = await _context.Users.Where(x =>
@@ -44,7 +44,26 @@ namespace AuthorizationLib.Tools
                         ur.IsActive == true &&
                         ur.IsDeleted == false
                     select ur).FirstOrDefaultAsync() ?? throw new Exception("User not assigned to role");
-                
+
+                RoleGrant? roleGrant = await _context.RoleGrants
+                   .Where(x => x.RoleId == role.Id).FirstOrDefaultAsync() ?? throw new Exception("Role has no any permission");
+
+                if (grantType == AuthGrantEnum.CREATE)
+                    if (roleGrant == null || roleGrant.Create == null || roleGrant.Create == false)
+                        throw new Exception("Unauthorized user role");
+
+                if (grantType == AuthGrantEnum.READ)
+                    if (roleGrant == null || roleGrant.Read == null || roleGrant.Read == false)
+                        throw new Exception("Unauthorized user role");
+
+                if (grantType == AuthGrantEnum.UPDATE)
+                    if (roleGrant == null || roleGrant.Update == null || roleGrant.Update == false)
+                        throw new Exception("Unauthorized user role");
+
+                if (grantType == AuthGrantEnum.DELETE)
+                    if (roleGrant == null || roleGrant.Delete == null || roleGrant.Delete == false)
+                        throw new Exception("Unauthorized user role");
+
                 return new ViewModels.AuthorizationVM
                 {
                     Auth = true,

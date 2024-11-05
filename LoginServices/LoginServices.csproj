@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AuthorizationLib\AuthorizationLib.csproj" />
+    <ProjectReference Include="..\EncryptionLib\EncryptionLib.csproj" />
     <ProjectReference Include="..\Project.WebApi.Entities\Project.WebApi.Entities.csproj" />
     <ProjectReference Include="..\Project.WebApi.ServiceDefaults\Project.WebApi.ServiceDefaults.csproj" />
   </ItemGroup>

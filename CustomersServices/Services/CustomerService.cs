@@ -2,18 +2,21 @@
 using AuthorizationLib.Tools;
 using CustomersServices.Services.Interfaces;
 using CustomersServices.ViewModels;
+using FluentValidation;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project.WebApi.Entities.Data;
 using Project.WebApi.Entities.Models;
 
 namespace CustomersServices.Services
 {
-    public class CustomerService(IHttpContextAccessor httpContextAccessor, AppDbContext context) : ICustomerService
+    public class CustomerService(IHttpContextAccessor httpContextAccessor, AppDbContext context, IValidator<Customer> customerValidator) : ICustomerService
     {
         private readonly AppDbContext _context = context;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly AuthorizationTool _authorizationTool = new AuthorizationTool(context);
+        private readonly IValidator<Customer> _customerValidator = customerValidator;
 
         public async Task<ResponseBase<Res_CustomerVM>> DeleteCustomer(string name)
         {
@@ -143,9 +146,6 @@ namespace CustomersServices.Services
                 if (data == null)
                     throw new Exception("Invalid body");
 
-                if (string.IsNullOrEmpty(data.Name))
-                    throw new Exception("Please fill all value");
-
                 if (await _context.Customers.Where(x => x.Name == data.Name).AnyAsync())
                     throw new Exception("Customer Name already exist");
 
@@ -161,7 +161,10 @@ namespace CustomersServices.Services
                     UpdatedBy = authed.UserId
                 };
 
-                var registeredUser = await _context.Customers.AddAsync(newCustomer);
+                if (ValidateCustomer(newCustomer).Equals(false))
+                    throw new Exception("Please fill all value");
+
+                var registeredCustomer = await _context.Customers.AddAsync(newCustomer);
 
                 await _context.SaveChangesAsync();
 
@@ -185,21 +188,20 @@ namespace CustomersServices.Services
                 if (data == null)
                     throw new Exception("Invalid body");
 
-                if (
-                    string.IsNullOrEmpty(data.Name))
-                    throw new Exception("Please fill all value");
-
                 Customer? updateCustomer = await _context.Customers.FindAsync(data.Id) ?? throw new Exception("Customer not found");
 
                 if (updateCustomer.Name != data.Name)
                 {
                     if (await _context.Customers.Where(x => x.Name == data.Name).AnyAsync())
-                        throw new Exception("Username already exist");
+                        throw new Exception("Customer already exist");
 
                     updateCustomer.Name = data.Name;
                 }
 
                 updateCustomer.Address = data.Address;
+
+                if (ValidateCustomer(updateCustomer).Equals(false))
+                    throw new Exception("Please fill all value");
 
                 _context.Attach(updateCustomer);
                 _context.Entry(updateCustomer).State = EntityState.Modified;
@@ -233,6 +235,12 @@ namespace CustomersServices.Services
                 Name = data.Name,
                 Address = data.Address
             };
+        }
+
+        private bool ValidateCustomer(Customer customer)
+        {
+            var validationResult = _customerValidator.Validate(customer);
+            return validationResult.IsValid;
         }
     }
 }

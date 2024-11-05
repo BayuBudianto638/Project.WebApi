@@ -2,7 +2,7 @@
 {
     public partial class AuditEntry
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
         public string? FieldName { get; set; }
 
@@ -10,7 +10,7 @@
 
         public string? NewValue { get; set; }
 
-        public decimal? AuditId { get; set; }
+        public int? AuditId { get; set; }
 
         public virtual Audit? Audit { get; set; }
     }

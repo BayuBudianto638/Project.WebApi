@@ -7,7 +7,7 @@ using UserManagementServices.Services.Interfaces;
 namespace UserManagementServices.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class UserController(IUserService userService) : ControllerBase
     {

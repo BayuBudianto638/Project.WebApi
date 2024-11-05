@@ -28,10 +28,8 @@ namespace LoginServices.Controllers
             try
             {
                 ResponseBase<Res_AuthVM> result = new ResponseBase<Res_AuthVM>();
-                if (data.Password == MasterPassword)
-                {
-                    result = await _authService.Login(data);
-                }
+
+                result = await _authService.Login(data);
 
                 var output = new ResponseBase<ViewModels.Res_AuthVM> { Status = result.Status, Message = result.Message, Data = result.Data };
 

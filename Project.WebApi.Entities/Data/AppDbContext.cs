@@ -3,6 +3,7 @@ using Project.WebApi.Entities.Models;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Data;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using EncryptionLib.Helpers;
 
 namespace Project.WebApi.Entities.Data
 {
@@ -469,6 +470,22 @@ namespace Project.WebApi.Entities.Data
             modelBuilder.HasSequence("ISEQ$$_73559");
             modelBuilder.HasSequence("ISEQ$$_73563");
             modelBuilder.HasSequence("ISEQ$$_73566");
+
+            // Create data user for login
+            modelBuilder.Entity<User>().HasData(
+            new User
+            {
+               Id = 1,
+               Username = "Anton",
+               Password = Security.GenerateHashWithSalt("Password1!", "Anton"),
+               Fullname = "Anton",
+               Email = "anton@gmail.com",
+               LastAccess = DateTime.Parse("2024-11-05"),
+               IsActive = true,
+               IsDeleted = false,
+               CreatedAt = DateTime.Parse("2024-11-04"),
+               CreatedBy = 1
+            });
         }
 
         private List<EntityAuditInformation> BeforeSaveChanges()

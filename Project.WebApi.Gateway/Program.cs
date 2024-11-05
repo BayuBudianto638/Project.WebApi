@@ -24,10 +24,10 @@ var app = builder.Build();
 
 app.UseMiddleware<SerilogMidware>();
 
-app.UseSwaggerForOcelotUI(option =>
-{
-    //option.PathToSwaggerGenerator = "/swagger/docs";
-});
+//app.UseSwaggerForOcelotUI(option =>
+//{
+//    //option.PathToSwaggerGenerator = "/swagger/docs";
+//});
 
 app.UseOcelot().Wait();
 

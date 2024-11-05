@@ -4,11 +4,11 @@ namespace Project.WebApi.Entities.Models
 {
     public partial class RoleMenu
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
-        public decimal? RoleId { get; set; }
+        public int? RoleId { get; set; }
 
-        public decimal? MenuId { get; set; }
+        public int? MenuId { get; set; }
 
         public bool? IsActive { get; set; }
 
@@ -16,15 +16,15 @@ namespace Project.WebApi.Entities.Models
 
         public DateTime? CreatedAt { get; set; }
 
-        public decimal? CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
-        public decimal? UpdatedBy { get; set; }
+        public int? UpdatedBy { get; set; }
 
         public DateTime? DeletedAt { get; set; }
 
-        public decimal? DeletedBy { get; set; }
+        public int? DeletedBy { get; set; }
 
         public virtual User? CreatedByNavigation { get; set; }
 

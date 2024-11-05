@@ -1,9 +1,11 @@
-﻿using LoginServices.Services.Interfaces;
+﻿using EncryptionLib.Helpers;
+using LoginServices.Services.Interfaces;
 using LoginServices.Tools.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Project.WebApi.Entities.Data;
 using Project.WebApi.Entities.Models;
 using System.Security.Claims;
+using System.Security.Permissions;
 
 namespace LoginServices.Services
 {
@@ -31,15 +33,13 @@ namespace LoginServices.Services
             {
                 if (data == null)
                     throw new Exception("Invalid body");
+
                 if (string.IsNullOrEmpty(data.Username))
                     throw new Exception("Username cannot be empty");
                 if (string.IsNullOrEmpty(data.Password))
                     throw new Exception("Password cannot be empty");
 
-                User? user = await _IsUserExist(data.Username) ?? throw new Exception("Username does not exist");
-
-                if (data.Password != MasterPassword)
-                    throw new Exception("Wrong password");
+                var user = await IsUserExist(data.Username, data.Password) ?? throw new Exception("Username does not exist");
 
                 var generatedRefreshToken = _tokenTool.GenerateRefreshToken();
 
@@ -98,7 +98,7 @@ namespace LoginServices.Services
                 if (string.IsNullOrEmpty(username))
                     throw new Exception("Invalid token");
 
-                User? user = await _IsUserExist(username);
+                User? user = await IsUserExist(username);
 
                 var selected_role = new ViewModels.Res_AuthLoginRoleVM();
 
@@ -222,7 +222,7 @@ namespace LoginServices.Services
                 if (string.IsNullOrEmpty(username))
                     throw new Exception("Invalid token");
 
-                User? user = await _IsUserExist(username);
+                User? user = await IsUserExist(username);
 
                 var roles = await (
                     from r in _context.Roles
@@ -257,7 +257,7 @@ namespace LoginServices.Services
                 if (string.IsNullOrEmpty(username))
                     throw new Exception("Invalid token");
 
-                User? user = await _IsUserExist(username);
+                User? user = await IsUserExist(username);
 
                 if (data == null)
                     throw new Exception("Invalid body");
@@ -328,12 +328,25 @@ namespace LoginServices.Services
                         Name = r.Name
                     }).FirstOrDefaultAsync() ?? throw new Exception("Unauthorized role");
         }
-        private async Task<User> _IsUserExist(string username)
+        private async Task<User> IsUserExist(string userName, string password)
         {
-            return await _context.Users.Where(x =>
-                x.Username == username &&
+            var user = await _context.Users.Where(x =>
+                x.Username == userName &&
+                x.Password == Security.GenerateHashWithSalt(password, userName) &&
                 x.IsActive == true &&
                 x.IsDeleted == false).FirstOrDefaultAsync();
+
+            return user ?? null;
+        }
+
+        private async Task<User> IsUserExist(string userName)
+        {
+            var user = await _context.Users.Where(x =>
+                x.Username == userName &&
+                x.IsActive == true &&
+                x.IsDeleted == false).FirstOrDefaultAsync();
+
+            return user ?? new User();
         }
 
         private string? GetCurrentToken()
@@ -346,7 +359,7 @@ namespace LoginServices.Services
             return null;
         }
 
-        private bool IsUserHasRole(decimal id)
+        private bool IsUserHasRole(int id)
         {
             return _context.UserRoles.Any(x => x.UserId == id);
         }

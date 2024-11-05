@@ -1,7 +1,11 @@
 
 using CustomersServices.Services;
 using CustomersServices.Services.Interfaces;
+using CustomersServices.Validations;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -67,6 +71,11 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
     // opt.UseSq(OracleSQLCompatibility.DatabaseVersion19);
 }));
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+
+// Fluent Validation
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters()
+    .AddValidatorsFromAssemblyContaining<CustomerValidator>();
 
 var app = builder.Build();
 

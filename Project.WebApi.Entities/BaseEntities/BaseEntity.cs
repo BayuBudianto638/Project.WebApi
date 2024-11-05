@@ -14,14 +14,14 @@ namespace Project.WebApi.Entities.BaseEntities
 
         public DateTime? CreatedAt { get; set; }
 
-        public decimal? CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
-        public decimal? UpdatedBy { get; set; }
+        public int? UpdatedBy { get; set; }
 
         public DateTime? DeletedAt { get; set; }
 
-        public decimal? DeletedBy { get; set; }
+        public int? DeletedBy { get; set; }
     }
 }

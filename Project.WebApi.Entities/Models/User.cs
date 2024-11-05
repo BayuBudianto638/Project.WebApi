@@ -5,7 +5,7 @@ namespace Project.WebApi.Entities.Models
 {
     public partial class User
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
         public string Username { get; set; } = null!;
 
@@ -23,13 +23,13 @@ namespace Project.WebApi.Entities.Models
 
         public DateTime? CreatedAt { get; set; }
 
-        public decimal? CreatedBy { get; set; }
+        public int? CreatedBy { get; set; }
 
         public DateTime? UpdatedAt { get; set; }
 
-        public decimal? UpdatedBy { get; set; }
+        public int? UpdatedBy { get; set; }
         public DateTime? DeletedAt { get; set; }
-        public decimal? DeletedBy { get; set; }
+        public int? DeletedBy { get; set; }
         public virtual ICollection<Menu> MenuCreatedByNavigations { get; set; } = new List<Menu>();
 
         public virtual ICollection<Menu> MenuDeletedByNavigations { get; set; } = new List<Menu>();

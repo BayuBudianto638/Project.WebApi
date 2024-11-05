@@ -2,9 +2,9 @@
 {
     public partial class RoleGrant
     {
-        public decimal Id { get; set; }
+        public int Id { get; set; }
 
-        public decimal? RoleId { get; set; }
+        public int? RoleId { get; set; }
 
         public bool? Create { get; set; }
 

@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -6,6 +8,7 @@ using Project.WebApi.Entities.Data;
 using System.Text;
 using UserManagementServices.Services;
 using UserManagementServices.Services.Interfaces;
+using UserManagementServices.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +69,11 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
     // opt.UseSq(OracleSQLCompatibility.DatabaseVersion19);
 }));
 builder.Services.AddScoped<IUserService, UserService>();
+
+// Fluent Validation
+builder.Services.AddFluentValidationAutoValidation()
+    .AddFluentValidationClientsideAdapters()
+    .AddValidatorsFromAssemblyContaining<UserValidator>();
 
 var app = builder.Build();
 

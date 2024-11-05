@@ -1,5 +1,7 @@
 ﻿using AuthorizationLib.Enums;
 using AuthorizationLib.Tools;
+using EncryptionLib.Helpers;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Project.WebApi.Entities.Data;
 using Project.WebApi.Entities.Models;
@@ -7,11 +9,12 @@ using UserManagementServices.Services.Interfaces;
 
 namespace UserManagementServices.Services
 {
-    public class UserService(IHttpContextAccessor httpContextAccessor, AppDbContext context) : IUserService
+    public class UserService(IHttpContextAccessor httpContextAccessor, AppDbContext context, IValidator<User> userValidator) : IUserService
     {
         private readonly AppDbContext _context = context;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
         private readonly AuthorizationTool _authorizationTool = new AuthorizationTool(context);
+        private readonly IValidator<User> _userValidator = userValidator;
 
         public async Task<ResponseBase<List<ViewModels.Res_UserVM>>> GetAllUsers()
         {
@@ -89,20 +92,13 @@ namespace UserManagementServices.Services
         {
             try
             {
-                //var authed = await _authorizationTool.IsAuthorized(_httpContextAccessor.HttpContext.User, AuthGrantEnum.CREATE);
+                var authed = await _authorizationTool.IsAuthorized(_httpContextAccessor.HttpContext.User, AuthGrantEnum.CREATE);
 
-                //if (!authed.Auth)
-                //    throw new Exception(authed.Message);
+                if (!authed.Auth)
+                    throw new Exception(authed.Message);
 
                 if (data == null)
                     throw new Exception("Invalid body");
-
-                if (
-                    string.IsNullOrEmpty(data.Username) ||
-                    string.IsNullOrEmpty(data.Password) ||
-                    string.IsNullOrEmpty(data.Fullname) ||
-                    string.IsNullOrEmpty(data.Email))
-                    throw new Exception("Please fill all value");
 
                 if (await _context.Users.Where(x => x.Username == data.Username).AnyAsync())
                     throw new Exception("Username already exist");
@@ -113,16 +109,19 @@ namespace UserManagementServices.Services
                 User newUser = new User
                 {
                     Username = data.Username,
-                    Password = data.Password,
+                    Password = GenerateHash(data.Password, data.Username),
                     Fullname = data.Fullname,
                     Email = data.Email,
                     IsActive = true,
                     IsDeleted = false,
                     CreatedAt = DateTime.Now,
-                    CreatedBy = (decimal)1,//authed.UserId,
+                    CreatedBy = authed.UserId,
                     UpdatedAt = DateTime.Now,
-                    UpdatedBy = (decimal)1,//authed.UserId
+                    UpdatedBy = authed.UserId
                 };
+
+                if (ValidateUser(newUser).Equals(false))
+                    throw new Exception("Please fill all value");
 
                 var registeredUser = await _context.Users.AddAsync(newUser);
 
@@ -204,13 +203,6 @@ namespace UserManagementServices.Services
                 if (data == null)
                     throw new Exception("Invalid body");
 
-                if (
-                    string.IsNullOrEmpty(data.Username) ||
-                    string.IsNullOrEmpty(data.Password) ||
-                    string.IsNullOrEmpty(data.Fullname) ||
-                    string.IsNullOrEmpty(data.Email))
-                    throw new Exception("Please fill all value");
-
                 User? updateUser = await _context.Users.FindAsync(data.Id) ?? throw new Exception("User not found");
 
                 if (updateUser.Username != data.Username)
@@ -229,11 +221,14 @@ namespace UserManagementServices.Services
                     updateUser.Email = data.Email;
                 }
 
-                updateUser.Password = data.Password;
+                updateUser.Password = GenerateHash(data.Password, updateUser.Username);
                 updateUser.Fullname = data.Fullname;
                 updateUser.IsActive = data.IsActive;
                 updateUser.UpdatedAt = DateTime.Now;
                 updateUser.UpdatedBy = authed.UserId;
+
+                if (ValidateUser(updateUser).Equals(false))
+                    throw new Exception("Please fill all value");
 
                 _context.Attach(updateUser);
                 _context.Entry(updateUser).State = EntityState.Modified;
@@ -294,32 +289,23 @@ namespace UserManagementServices.Services
             return userDetail;
         }
 
-        public async Task<User> CreateUserLdapAsync(User userLdap)
-        {
-            var newUser = new User
-            {
-                Username = userLdap.Username,
-                Password = " ",
-                Email = userLdap.Email,
-                Fullname = userLdap.Fullname,
-                IsActive = userLdap.IsActive,
-                IsDeleted = false,
-                CreatedAt = DateTime.Now,
-            };
-
-            var registeredUser = await _context.Users.AddAsync(newUser);
-
-            await _context.SaveChangesAsync();
-
-            return registeredUser.Entity;
-        }
-
-        public async Task<User> GetUserInfo(string username)
+        private async Task<User> GetUserInfo(string username)
         {
             return await _context.Users.FirstOrDefaultAsync(x =>
                         x.Username == username &&
                         x.IsDeleted == false)
                         ?? throw new Exception($"User {username} is not registered to CLS System");
+        }
+
+        private bool ValidateUser(User user)
+        {
+            var validationResult = _userValidator.Validate(user);
+            return validationResult.IsValid;
+        }
+
+        private static string GenerateHash(string password, string salt)
+        {
+            return Security.GenerateHashWithSalt(password, salt);
         }
     }
 }
