@@ -7,8 +7,9 @@ namespace CustomersServices.Validations
     {
         public CustomerValidator()
         {
-            RuleFor(user => user.Name).NotEmpty().WithMessage("Name is required.");
-            RuleFor(user => user.Address).NotEmpty().WithMessage("Address is required.");
+            RuleFor(user => user.CustomerCode).NotEmpty().WithMessage("Customer Code is required.");
+            RuleFor(user => user.CustomerName).NotEmpty().WithMessage("Customer Name is required.");
+            RuleFor(user => user.CustomerAddress).NotEmpty().WithMessage("Customer Address is required.");
         }
     }
 }

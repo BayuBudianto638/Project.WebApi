@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.WebApi.Entities.Models;
+using System.Security.Claims;
 
 namespace CustomersServices.Controllers
 {
@@ -20,18 +21,24 @@ namespace CustomersServices.Controllers
             {
                 var result = await _customerService.GetAllCustomers();
 
-                var output = new ResponseBase<List<ViewModels.Res_CustomerVM>> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
-                    return Ok(output);
+                {
+                    var response = ResponseGetBase<List<ViewModels.Res_CustomerVM>>.Success(result.Data!, result.Message);
+                    return Ok(response);
+                }
                 else
-                    return BadRequest(output);
+                {
+                    var response = ResponseGetBase<List<ViewModels.Res_CustomerVM>>.Fail(result.Message);
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
-            {
-                return BadRequest(new ResponseBase<List<ViewModels.Res_CustomerVM>> { Status = false, Message = ex.Message });
+                {
+                    var errorResponse = ResponseGetBase<List<ViewModels.Res_CustomerVM>>.Fail(ex.Message);
+                return BadRequest(errorResponse);
             }
         }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -40,18 +47,24 @@ namespace CustomersServices.Controllers
             {
                 var result = await _customerService.GetCustomerById(id);
 
-                var output = new ResponseBase<ViewModels.Res_CustomerDetailVM> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
-                    return Ok(output);
+                {
+                    var response = ResponseGetBase<ViewModels.Res_CustomerDetailVM>.Success(result.Data!, result.Message);
+                    return Ok(response);
+                }
                 else
-                    return BadRequest(output);
+                {
+                    var response = ResponseGetBase<ViewModels.Res_CustomerDetailVM>.Fail(result.Message);
+                    return BadRequest(response);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBase<ViewModels.Res_CustomerDetailVM> { Status = false, Message = ex.Message });
+                var errorResponse = ResponseGetBase<ViewModels.Res_CustomerDetailVM>.Fail(ex.Message);
+                return BadRequest(errorResponse);
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Insert(ViewModels.Req_CustomerVM data)

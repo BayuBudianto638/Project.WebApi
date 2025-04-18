@@ -41,18 +41,27 @@ namespace LoginServices.Services
 
                 var user = await IsUserExist(data.Username, data.Password) ?? throw new Exception("Username does not exist");
 
+                var roleId = await _context.UserRoles
+                     .Where(ur => ur.UserId == user.Id && ur.IsActive == true)
+                     .Select(ur => ur.Role.Id)
+                     .FirstOrDefaultAsync();
+
+                if (roleId == 0)
+                    throw new Exception("User has no active role");
+
+
                 var generatedRefreshToken = _tokenTool.GenerateRefreshToken();
 
                 UserToken userToken = new UserToken
                 {
                     UserId = user.Id,
                     RefreshToken = generatedRefreshToken,
-                    ExpiredAt = DateTime.Now.AddDays(Convert.ToInt32(_configuration["Jwt:ExpirationTime:RefreshToken"])),
+                    ExpiredAt = DateTime.UtcNow.AddDays(Convert.ToInt32(_configuration["Jwt:ExpirationTime:RefreshToken"])),
                     Ip = data.IP,
                     UserAgent = data.UserAgent
                 };
 
-                user.LastAccess = DateTime.Now;
+                user.LastAccess = DateTime.UtcNow;
 
                 _context.Attach(user);
                 _context.Entry(user).State = EntityState.Modified;
@@ -63,7 +72,8 @@ namespace LoginServices.Services
 
                 var generatedAccessToken = _tokenTool.GenerateAccessToken(new List<Claim>
                 {
-                    new Claim(ClaimTypes.Name, user.Username)
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, roleId.ToString())
                 });
 
                 return new ResponseBase<ViewModels.Res_AuthVM>
@@ -157,7 +167,7 @@ namespace LoginServices.Services
                     join ut in _context.UserTokens on u.Id equals ut.UserId
                     where
                         ut.RefreshToken == data.RefreshToken &&
-                        ut.ExpiredAt >= DateTime.Now &&
+                        ut.ExpiredAt >= DateTimeOffset.UtcNow &&
                         u.IsActive == true &&
                         u.IsDeleted == false
                     select u).FirstOrDefaultAsync();

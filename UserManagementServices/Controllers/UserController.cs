@@ -20,16 +20,20 @@ namespace UserManagementServices.Controllers
             {
                 var result = await _userService.GetAllUsers();
 
-                var output = new ResponseBase<List<ViewModels.Res_UserVM>> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
+                {
+                    var output = ResponseGetBase<List<ViewModels.Res_UserVM>>.Success(result.Data, result.Message);
                     return Ok(output);
+                }
                 else
+                {
+                    var output = ResponseGetBase<List<ViewModels.Res_UserVM>>.Fail(result.Message);
                     return BadRequest(output);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBase<List<ViewModels.Res_UserVM>> { Status = false, Message = ex.Message });
+                return BadRequest(ResponseGetBase<List<ViewModels.Res_UserVM>>.Fail(ex.Message));
             }
         }
 
@@ -40,18 +44,23 @@ namespace UserManagementServices.Controllers
             {
                 var result = await _userService.GetUserById(id);
 
-                var output = new ResponseBase<ViewModels.Res_UserDetailVM> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
+                {
+                    var output = ResponseGetBase<ViewModels.Res_UserDetailVM>.Success(result.Data, result.Message);
                     return Ok(output);
+                }
                 else
+                {
+                    var output = ResponseGetBase<ViewModels.Res_UserDetailVM>.Fail(result.Message);
                     return BadRequest(output);
+                }
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBase<ViewModels.Res_UserDetailVM> { Status = false, Message = ex.Message });
+                return BadRequest(ResponseGetBase<ViewModels.Res_UserDetailVM>.Fail(ex.Message));
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Insert(ViewModels.Req_UserVM data)

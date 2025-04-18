@@ -20,16 +20,14 @@ namespace UserManagementServices.Controllers
             {
                 var result = await _roleService.GetAllRoles();
 
-                var output = new ResponseBase<List<ViewModels.Res_RoleVM>> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
-                    return Ok(output);
+                    return Ok(ResponseGetBase<List<ViewModels.Res_RoleVM>>.Success(result.Data, result.Message));
                 else
-                    return BadRequest(output);
+                    return BadRequest(ResponseGetBase<List<ViewModels.Res_RoleVM>>.Fail(result.Message));
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBase<List<ViewModels.Res_RoleVM>> { Status = false, Message = ex.Message });
+                return BadRequest(ResponseGetBase<List<ViewModels.Res_RoleVM>>.Fail(ex.Message));
             }
         }
 
@@ -40,16 +38,14 @@ namespace UserManagementServices.Controllers
             {
                 var result = await _roleService.GetRoleById(id);
 
-                var output = new ResponseBase<ViewModels.Res_RoleDetailVM> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
-                    return Ok(output);
+                    return Ok(ResponseGetBase<ViewModels.Res_RoleDetailVM>.Success(result.Data, result.Message));
                 else
-                    return BadRequest(output);
+                    return BadRequest(ResponseGetBase<ViewModels.Res_RoleDetailVM>.Fail(result.Message));
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBase<ViewModels.Res_RoleDetailVM> { Status = false, Message = ex.Message });
+                return BadRequest(ResponseGetBase<ViewModels.Res_RoleDetailVM>.Fail(ex.Message));
             }
         }
 
@@ -60,18 +56,17 @@ namespace UserManagementServices.Controllers
             {
                 var result = await _roleService.GetRoleAssignedMenu(id);
 
-                var output = new ResponseBase<List<ViewModels.Res_MenuVM>> { Status = result.Status, Message = result.Message, Data = result.Data };
-
                 if (result.Status)
-                    return Ok(output);
+                    return Ok(ResponseGetBase<List<ViewModels.Res_MenuVM>>.Success(result.Data, result.Message));
                 else
-                    return BadRequest(output);
+                    return BadRequest(ResponseGetBase<List<ViewModels.Res_MenuVM>>.Fail(result.Message));
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseBase<List<ViewModels.Res_MenuVM>> { Status = false, Message = ex.Message });
+                return BadRequest(ResponseGetBase<List<ViewModels.Res_MenuVM>>.Fail(ex.Message));
             }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Insert(ViewModels.Req_RoleVM data)

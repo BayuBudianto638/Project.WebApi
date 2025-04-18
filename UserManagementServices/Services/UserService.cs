@@ -266,28 +266,38 @@ namespace UserManagementServices.Services
                 LastAccess = data.LastAccess,
             };
 
-            var roles = await (
-                    from r in _context.Roles
-                    join ur in _context.UserRoles on r.Id equals ur.RoleId
-                    join rg in _context.RoleGrants on r.Id equals rg.RoleId
-                    where ur.UserId == data.Id
-                    select new ViewModels.Res_UserLoginRoleVM
-                    {
-                        Id = (int)r.Id,
-                        Name = r.Name,
-                        Grants =
-                        {
-                            Create = rg.Create,
-                            Read = rg.Read,
-                            Update = rg.Update,
-                            Delete = rg.Delete
-                        }
-                    }).ToListAsync();
+            var rolesQuery = from r in _context.Roles
+                             join ur in _context.UserRoles on r.Id equals ur.RoleId
+                             join rg in _context.RoleGrants on r.Id equals rg.RoleId
+                             where ur.UserId == data.Id
+                             select new
+                             {
+                                 RoleId = r.Id,
+                                 RoleName = r.Name,
+                                 Create = rg.Create,
+                                 Read = rg.Read,
+                                 Update = rg.Update,
+                                 Delete = rg.Delete
+                             };
 
-            userDetail.Roles = roles.ToArray();
+            var roles = await rolesQuery.ToListAsync();
+
+            userDetail.Roles = roles.Select(r => new ViewModels.Res_UserLoginRoleVM
+            {
+                Id = (int)r.RoleId,
+                Name = r.RoleName,
+                Grants = new ViewModels.RoleGrantVM
+                {
+                    Create = r.Create,
+                    Read = r.Read,
+                    Update = r.Update,
+                    Delete = r.Delete
+                }
+            }).ToArray();
 
             return userDetail;
         }
+
 
         private async Task<User> GetUserInfo(string username)
         {

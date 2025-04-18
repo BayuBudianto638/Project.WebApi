@@ -1,15 +1,12 @@
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Project.WebApi.Entities.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var conStrBuilder = new SqlConnectionStringBuilder(
-        builder.Configuration.GetConnectionString("Context"));
-var connection = conStrBuilder.ConnectionString;
+var connection = builder.Configuration.GetConnectionString("Context");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(connection));
+    options.UseNpgsql(connection));
 
 var app = builder.Build();
 app.Run();

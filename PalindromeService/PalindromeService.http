@@ -1,0 +1,6 @@
+@PalindromeService_HostAddress = http://localhost:5282
+
+GET {{PalindromeService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

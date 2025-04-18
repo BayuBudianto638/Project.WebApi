@@ -2,9 +2,9 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Project.WebApi.Entities.Data;
 
 #nullable disable
@@ -12,8 +12,8 @@ using Project.WebApi.Entities.Data;
 namespace Project.WebApi.Entities.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241104130936_FirstMigration")]
-    partial class FirstMigration
+    [Migration("20250417114229_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,9 +22,9 @@ namespace Project.WebApi.Entities.Migrations
             modelBuilder
                 .HasDefaultSchema("DBDEV")
                 .HasAnnotation("ProductVersion", "8.0.10")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.HasSequence("ISEQ$$_73100");
 
@@ -86,36 +86,36 @@ namespace Project.WebApi.Entities.Migrations
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.Audit", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("ChangeDate")
                         .HasColumnType("DATE");
 
-                    b.Property<decimal?>("ChangedById")
+                    b.Property<int?>("ChangedById")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("NewValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("OldValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Operation")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<decimal?>("RecordId")
+                    b.Property<int?>("RecordId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("TableName")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id")
                         .HasName("SYS_C008258");
@@ -125,25 +125,25 @@ namespace Project.WebApi.Entities.Migrations
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.AuditEntry", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal?>("AuditId")
+                    b.Property<int?>("AuditId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FieldName")
                         .HasMaxLength(255)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("NewValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.Property<string>("OldValue")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id")
                         .HasName("SYS_C008260");
@@ -155,66 +155,74 @@ namespace Project.WebApi.Entities.Migrations
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.Customer", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CustomerId"));
 
-                    b.Property<string>("Address")
+                    b.Property<DateTimeOffset?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("CreatedBy")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CustomerAddress")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
 
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("CustomerCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
-                    b.Property<decimal?>("CreatedBy")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<decimal?>("DeletedBy")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int?>("DeletedBy")
+                        .HasColumnType("integer");
 
                     b.Property<bool?>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
                     b.Property<bool?>("IsDeleted")
-                        .HasColumnType("bit");
+                        .HasColumnType("boolean");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTimeOffset?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<int?>("UpdatedBy")
+                        .HasColumnType("integer");
 
-                    b.Property<decimal?>("UpdatedBy")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
+                    b.HasKey("CustomerId");
 
                     b.ToTable("Customers", "DBDEV");
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.Menu", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Created_At");
 
-                    b.Property<decimal?>("CreatedBy")
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Created_By");
 
@@ -222,25 +230,25 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Deleted_At");
 
-                    b.Property<decimal?>("DeletedBy")
+                    b.Property<int?>("DeletedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Deleted_By");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Icon")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<int?>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Active")
                         .HasDefaultValueSql("1");
 
-                    b.Property<bool?>("IsDeleted")
+                    b.Property<int?>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Deleted")
@@ -249,26 +257,26 @@ namespace Project.WebApi.Entities.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<decimal?>("Order")
+                    b.Property<int?>("Order")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("ParentNavigationId")
+                    b.Property<int?>("ParentNavigationId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Parent_Navigation_Id");
 
                     b.Property<string>("Route")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasDefaultValueSql("'#'");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Updated_At");
 
-                    b.Property<decimal?>("UpdatedBy")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Updated_By");
 
@@ -287,21 +295,32 @@ namespace Project.WebApi.Entities.Migrations
                         .IsUnique();
 
                     b.ToTable("Menus", "DBDEV");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "CUSTOMER",
+                            Description = "Customer Management",
+                            Name = "Customer",
+                            Order = 1,
+                            Route = "/customer"
+                        });
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.Role", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Created_At");
 
-                    b.Property<decimal?>("CreatedBy")
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Created_By");
 
@@ -309,21 +328,21 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Deleted_At");
 
-                    b.Property<decimal?>("DeletedBy")
+                    b.Property<int?>("DeletedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Deleted_By");
 
                     b.Property<string>("Description")
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<int?>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Active")
                         .HasDefaultValueSql("1");
 
-                    b.Property<bool?>("IsDeleted")
+                    b.Property<int?>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Deleted")
@@ -332,16 +351,16 @@ namespace Project.WebApi.Entities.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
-                    b.Property<decimal?>("Order")
+                    b.Property<int?>("Order")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Updated_At");
 
-                    b.Property<decimal?>("UpdatedBy")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Updated_By");
 
@@ -355,36 +374,46 @@ namespace Project.WebApi.Entities.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Roles", "DBDEV");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Administrator Role",
+                            IsActive = 1,
+                            Name = "Admin",
+                            Order = 1
+                        });
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.RoleGrant", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool?>("Create")
+                    b.Property<int?>("Create")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("0");
 
-                    b.Property<bool?>("Delete")
+                    b.Property<int?>("Delete")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("0");
 
-                    b.Property<bool?>("Read")
+                    b.Property<int?>("Read")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("0");
 
-                    b.Property<decimal?>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Role_Id");
 
-                    b.Property<bool?>("Update")
+                    b.Property<int?>("Update")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasDefaultValueSql("0");
@@ -395,21 +424,32 @@ namespace Project.WebApi.Entities.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Role_Grant", "DBDEV");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Create = 1,
+                            Delete = 1,
+                            Read = 1,
+                            RoleId = 1,
+                            Update = 1
+                        });
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.RoleMenu", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Created_At");
 
-                    b.Property<decimal?>("CreatedBy")
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Created_By");
 
@@ -417,27 +457,27 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Deleted_At");
 
-                    b.Property<decimal?>("DeletedBy")
+                    b.Property<int?>("DeletedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Deleted_By");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<int?>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Active")
                         .HasDefaultValueSql("1");
 
-                    b.Property<bool?>("IsDeleted")
+                    b.Property<int?>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Deleted")
                         .HasDefaultValueSql("0");
 
-                    b.Property<decimal?>("MenuId")
+                    b.Property<int?>("MenuId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Menu_Id");
 
-                    b.Property<decimal?>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Role_Id");
 
@@ -445,7 +485,7 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Updated_At");
 
-                    b.Property<decimal?>("UpdatedBy")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Updated_By");
 
@@ -463,21 +503,30 @@ namespace Project.WebApi.Entities.Migrations
                     b.HasIndex("UpdatedBy");
 
                     b.ToTable("Role_Menu", "DBDEV");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsActive = 1,
+                            MenuId = 1,
+                            RoleId = 1
+                        });
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.User", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Created_At");
 
-                    b.Property<decimal?>("CreatedBy")
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Created_By");
 
@@ -485,27 +534,27 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Deleted_At");
 
-                    b.Property<decimal?>("DeletedBy")
+                    b.Property<int?>("DeletedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Deleted_By");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("Fullname")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<int?>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Active")
                         .HasDefaultValueSql("1");
 
-                    b.Property<bool?>("IsDeleted")
+                    b.Property<int?>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Deleted")
@@ -518,22 +567,22 @@ namespace Project.WebApi.Entities.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Updated_At");
 
-                    b.Property<decimal?>("UpdatedBy")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal?>("UpdatedByNavigationId")
+                    b.Property<int?>("UpdatedByNavigationId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.HasKey("Id")
                         .HasName("SYS_C007617");
@@ -541,21 +590,36 @@ namespace Project.WebApi.Entities.Migrations
                     b.HasIndex("UpdatedByNavigationId");
 
                     b.ToTable("Users", "DBDEV");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 11, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreatedBy = 1,
+                            Email = "anton@gmail.com",
+                            Fullname = "Anton",
+                            IsActive = 1,
+                            IsDeleted = 0,
+                            LastAccess = new DateTime(2024, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Password = "zImqzO3cO0GZPANlb96bk18UgYq9tB4+hNA+N/QoyzI=",
+                            Username = "Anton"
+                        });
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.UserRole", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("DATE")
                         .HasColumnName("Created_At");
 
-                    b.Property<decimal?>("CreatedBy")
+                    b.Property<int?>("CreatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Created_By");
 
@@ -563,23 +627,23 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Deleted_At");
 
-                    b.Property<decimal?>("DeletedBy")
+                    b.Property<int?>("DeletedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Deleted_By");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<int?>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Active")
                         .HasDefaultValueSql("1");
 
-                    b.Property<bool?>("IsDeleted")
+                    b.Property<int?>("IsDeleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER")
                         .HasColumnName("Is_Deleted")
                         .HasDefaultValueSql("0");
 
-                    b.Property<decimal?>("RoleId")
+                    b.Property<int?>("RoleId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Role_Id");
 
@@ -587,11 +651,11 @@ namespace Project.WebApi.Entities.Migrations
                         .HasColumnType("DATE")
                         .HasColumnName("Updated_At");
 
-                    b.Property<decimal?>("UpdatedBy")
+                    b.Property<int?>("UpdatedBy")
                         .HasColumnType("INTEGER")
                         .HasColumnName("Updated_By");
 
-                    b.Property<decimal?>("UserId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("User_Id");
 
@@ -609,15 +673,24 @@ namespace Project.WebApi.Entities.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("User_Role", "DBDEV");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsActive = 1,
+                            RoleId = 1,
+                            UserId = 1
+                        });
                 });
 
             modelBuilder.Entity("Project.WebApi.Entities.Models.UserToken", b =>
                 {
-                    b.Property<decimal>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<decimal>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("DATE")
@@ -629,21 +702,21 @@ namespace Project.WebApi.Entities.Migrations
 
                     b.Property<string>("Ip")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("IP");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
+                        .HasColumnType("character varying(500)")
                         .HasColumnName("Refresh_Token");
 
                     b.Property<string>("UserAgent")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("User_Agent");
 
-                    b.Property<decimal>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("INTEGER")
                         .HasColumnName("User_Id");
 

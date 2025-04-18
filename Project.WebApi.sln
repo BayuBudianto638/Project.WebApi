@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Project.WebApi.Gateway", "P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncryptionLib", "EncryptionLib\EncryptionLib.csproj", "{37C16517-3E0F-47F3-802D-C0C22E673BF6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PalindromeServices", "PalindromeService\PalindromeServices.csproj", "{6A26F8D9-1429-6574-A9A4-9E14DAC7E7B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,10 @@ Global
 		{37C16517-3E0F-47F3-802D-C0C22E673BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37C16517-3E0F-47F3-802D-C0C22E673BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37C16517-3E0F-47F3-802D-C0C22E673BF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A26F8D9-1429-6574-A9A4-9E14DAC7E7B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A26F8D9-1429-6574-A9A4-9E14DAC7E7B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A26F8D9-1429-6574-A9A4-9E14DAC7E7B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A26F8D9-1429-6574-A9A4-9E14DAC7E7B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{395E24DD-CE88-4F6C-95AB-4C2DD86B5553} = {226BC722-906C-4114-85A6-3726E29BE82E}
 		{D635FB54-CF28-4053-BABF-1F5C0FAE6BB6} = {226BC722-906C-4114-85A6-3726E29BE82E}
 		{37C16517-3E0F-47F3-802D-C0C22E673BF6} = {128CF291-8B60-4518-996C-86619143D407}
+		{6A26F8D9-1429-6574-A9A4-9E14DAC7E7B3} = {226BC722-906C-4114-85A6-3726E29BE82E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E033007-FAC0-480B-8B56-0E9123A6061B}

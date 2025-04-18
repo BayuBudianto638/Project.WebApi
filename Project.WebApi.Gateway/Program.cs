@@ -1,14 +1,36 @@
+﻿using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Polly;
 using Project.WebApi.Gateway.Middleware;
 using Serilog;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("ocelot.json", false, true);
 
-builder.Services.AddOcelot(builder.Configuration);
+builder.Services
+    .AddOcelot(builder.Configuration)
+    .AddPolly();
+
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
+
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
+    {
+        options.RequireHttpsMetadata = false; // or true if using HTTPS
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes("f461ff8bd05289f9a56a68b7ed43445e")) // match your auth service
+        };
+    });
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 {
@@ -29,8 +51,6 @@ app.UseMiddleware<SerilogMidware>();
 //    //option.PathToSwaggerGenerator = "/swagger/docs";
 //});
 
-app.UseOcelot().Wait();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -40,7 +60,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+await app.UseOcelot();
 
 app.MapControllers();
 

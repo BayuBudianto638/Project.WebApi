@@ -3,8 +3,6 @@ using AuthorizationLib.Tools;
 using CustomersServices.Services.Interfaces;
 using CustomersServices.ViewModels;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Project.WebApi.Entities.Data;
 using Project.WebApi.Entities.Models;
@@ -30,16 +28,16 @@ namespace CustomersServices.Services
                 if (name.Length < 1)
                     throw new Exception("Id cannot be empty");
 
-                Customer? removedCustomer = await _context.Customers.Where(x => x.Name == name).FirstOrDefaultAsync();
+                Customer? removedCustomer = await _context.Customers.Where(x => x.CustomerName == name).FirstOrDefaultAsync();
 
                 if (removedCustomer == null || removedCustomer.IsDeleted == true)
                     throw new Exception("Customer Name not found");
 
                 removedCustomer.IsDeleted = true;
                 removedCustomer.DeletedBy = authed.UserId;
-                removedCustomer.DeletedAt = DateTime.Now;
+                removedCustomer.DeletedAt = DateTimeOffset.UtcNow;
                 removedCustomer.UpdatedBy = authed.UserId;
-                removedCustomer.UpdatedAt = DateTime.Now;
+                removedCustomer.UpdatedAt = DateTimeOffset.UtcNow;
 
                 _context.Attach(removedCustomer);
                 _context.Entry(removedCustomer).State = EntityState.Modified;
@@ -90,7 +88,7 @@ namespace CustomersServices.Services
                     throw new Exception("Invalid body");
 
                 Customer? customer = await _context.Customers.Where(x =>
-                        x.Name == name &&
+                        x.CustomerName == name &&
                         x.IsDeleted == false).FirstOrDefaultAsync() ?? throw new Exception("Username not found");
 
                 return new ResponseBase<ViewModels.Res_CustomerDetailVM> { Status = true, Message = "OK", Data = await CustomerToDetailVM(customer) };
@@ -101,7 +99,7 @@ namespace CustomersServices.Services
             }
         }        
 
-        public async Task<ResponseBase<Res_CustomerDetailVM>> GetCustomerById(int id)
+        public async Task<ResponseBase<Res_CustomerDetailVM>> GetCustomerById(int customerId)
         {
             try
             {
@@ -110,11 +108,11 @@ namespace CustomersServices.Services
                 if (!authed.Auth)
                     throw new Exception(authed.Message);
 
-                if (id < 1)
+                if (customerId < 1)
                     throw new Exception("Invalid body");
 
                 Customer? customer = await _context.Customers.Where(x =>
-                        x.Id == id &&
+                        x.CustomerId == customerId &&
                         x.IsDeleted == false).FirstOrDefaultAsync() ?? throw new Exception("Id not found");
 
                 return new ResponseBase<ViewModels.Res_CustomerDetailVM> { Status = true, Message = "OK", Data = await CustomerToDetailVM(customer) };
@@ -129,7 +127,7 @@ namespace CustomersServices.Services
         public async Task<Customer> GetCustomerInfo(string name)
         {
             return await _context.Customers.FirstOrDefaultAsync(x =>
-                        x.Name == name &&
+                        x.CustomerName == name &&
                         x.IsDeleted == false)
                         ?? throw new Exception($"Customer {name} is not registered in the System");
         }
@@ -146,25 +144,26 @@ namespace CustomersServices.Services
                 if (data == null)
                     throw new Exception("Invalid body");
 
-                if (await _context.Customers.Where(x => x.Name == data.Name).AnyAsync())
+                if (await _context.Customers.Where(x => x.CustomerName == data.CustomerName).AnyAsync())
                     throw new Exception("Customer Name already exist");
 
                 Customer newCustomer = new Customer
                 {
-                    Name = data.Name,
-                    Address = data.Address,
+                    CustomerCode = data.CustomerCode,
+                    CustomerName = data.CustomerName,
+                    CustomerAddress = data.CustomerAddress,
                     IsActive = true,
                     IsDeleted = false,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTimeOffset.UtcNow,
                     CreatedBy = authed.UserId,
-                    UpdatedAt = DateTime.Now,
+                    UpdatedAt = DateTimeOffset.UtcNow,
                     UpdatedBy = authed.UserId
                 };
 
                 if (ValidateCustomer(newCustomer).Equals(false))
                     throw new Exception("Please fill all value");
 
-                var registeredCustomer = await _context.Customers.AddAsync(newCustomer);
+                await _context.Customers.AddAsync(newCustomer);
 
                 await _context.SaveChangesAsync();
 
@@ -188,17 +187,17 @@ namespace CustomersServices.Services
                 if (data == null)
                     throw new Exception("Invalid body");
 
-                Customer? updateCustomer = await _context.Customers.FindAsync(data.Id) ?? throw new Exception("Customer not found");
+                Customer? updateCustomer = await _context.Customers.FindAsync(data.CustomerId) ?? throw new Exception("Customer not found");
 
-                if (updateCustomer.Name != data.Name)
+                if (updateCustomer.CustomerName != data.CustomerName)
                 {
-                    if (await _context.Customers.Where(x => x.Name == data.Name).AnyAsync())
+                    if (await _context.Customers.Where(x => x.CustomerName == data.CustomerName).AnyAsync())
                         throw new Exception("Customer already exist");
 
-                    updateCustomer.Name = data.Name;
+                    updateCustomer.CustomerName = data.CustomerName;
                 }
 
-                updateCustomer.Address = data.Address;
+                updateCustomer.CustomerAddress = data.CustomerAddress;
 
                 if (ValidateCustomer(updateCustomer).Equals(false))
                     throw new Exception("Please fill all value");
@@ -221,9 +220,10 @@ namespace CustomersServices.Services
         {
             return new ViewModels.Res_CustomerVM
             {
-                Id = (int)data.Id,
-                Name = data.Name,
-                Address = data.Address
+                CustomerId = (int)data.CustomerId,
+                CustomerCode = data.CustomerCode,
+                CustomerName = data.CustomerName,
+                CustomerAddress = data.CustomerAddress
             };
         }
 
@@ -231,9 +231,10 @@ namespace CustomersServices.Services
         {
             return new ViewModels.Res_CustomerDetailVM
             {
-                Id = (int)data.Id,
-                Name = data.Name,
-                Address = data.Address
+                CustomerId = (int)data.CustomerId,
+                CustomerCode = data.CustomerCode,
+                CustomerName = data.CustomerName,
+                CustomerAddress = data.CustomerAddress
             };
         }
 

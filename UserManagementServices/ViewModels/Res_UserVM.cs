@@ -10,6 +10,6 @@
 
         public string Email { get; set; } = null!;
 
-        public DateTime? LastAccess { get; set; }
+        public DateTimeOffset? LastAccess { get; set; }
     }
 }

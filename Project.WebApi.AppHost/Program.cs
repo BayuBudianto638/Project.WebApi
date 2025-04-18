@@ -12,4 +12,6 @@ builder.AddProject<Projects.CustomersServices>("customersservices");
 
 builder.AddProject<Projects.Project_WebApi_Gateway>("project-webapi-gateway");
 
+builder.AddProject<Projects.PalindromeServices>("palindromeservices");
+
 builder.Build().Run();

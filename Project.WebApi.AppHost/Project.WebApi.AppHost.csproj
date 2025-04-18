@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CustomersServices\CustomersServices.csproj" />
     <ProjectReference Include="..\LoginServices\LoginServices.csproj" />
+    <ProjectReference Include="..\PalindromeService\PalindromeServices.csproj" />
     <ProjectReference Include="..\Project.WebApi.Entities\Project.WebApi.Entities.csproj" />
     <ProjectReference Include="..\Project.WebApi.Gateway\Project.WebApi.Gateway.csproj" />
     <ProjectReference Include="..\Project.WebApi\Project.WebApi.csproj" />

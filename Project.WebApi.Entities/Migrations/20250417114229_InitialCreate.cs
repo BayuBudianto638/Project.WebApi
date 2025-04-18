@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace Project.WebApi.Entities.Migrations
 {
     /// <inheritdoc />
-    public partial class FirstMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -135,15 +136,15 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Operation = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
-                    TableName = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
-                    OldValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NewValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    RecordId = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Operation = table.Column<string>(type: "character varying(255)", unicode: false, maxLength: 255, nullable: true),
+                    TableName = table.Column<string>(type: "character varying(255)", unicode: false, maxLength: 255, nullable: true),
+                    OldValue = table.Column<string>(type: "TEXT", nullable: true),
+                    NewValue = table.Column<string>(type: "TEXT", nullable: true),
+                    RecordId = table.Column<int>(type: "INTEGER", nullable: true),
                     ChangeDate = table.Column<DateTime>(type: "DATE", nullable: true),
-                    ChangedById = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    ChangedById = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -155,22 +156,23 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    UpdatedBy = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    DeletedBy = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    CustomerId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CustomerCode = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    CustomerName = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    CustomerAddress = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    CreatedBy = table.Column<int>(type: "integer", nullable: true),
+                    UpdatedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "integer", nullable: true),
+                    DeletedAt = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    DeletedBy = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.Id);
+                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -178,22 +180,22 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Fullname = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Username = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Password = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Fullname = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Email = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     Last_Access = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Is_Active = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
-                    Is_Deleted = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Is_Active = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
+                    Is_Deleted = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
                     Created_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Created_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Created_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Updated_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    UpdatedBy = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    UpdatedBy = table.Column<int>(type: "INTEGER", nullable: true),
                     Deleted_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Deleted_By = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    UpdatedByNavigationId = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    Deleted_By = table.Column<int>(type: "INTEGER", nullable: true),
+                    UpdatedByNavigationId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -211,12 +213,12 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FieldName = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
-                    OldValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NewValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AuditId = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    FieldName = table.Column<string>(type: "character varying(255)", unicode: false, maxLength: 255, nullable: true),
+                    OldValue = table.Column<string>(type: "text", nullable: true),
+                    NewValue = table.Column<string>(type: "text", nullable: true),
+                    AuditId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -234,23 +236,23 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Route = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true, defaultValueSql: "'#'"),
-                    Parent_Navigation_Id = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Order = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Is_Active = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
-                    Is_Deleted = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
-                    Icon = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Code = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Route = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true, defaultValueSql: "'#'"),
+                    Parent_Navigation_Id = table.Column<int>(type: "INTEGER", nullable: true),
+                    Order = table.Column<int>(type: "INTEGER", nullable: true),
+                    Is_Active = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
+                    Is_Deleted = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Icon = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Created_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Created_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Created_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Updated_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Updated_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Updated_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Deleted_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Deleted_By = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    Deleted_By = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -286,19 +288,19 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    Order = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Is_Active = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
-                    Is_Deleted = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    Order = table.Column<int>(type: "INTEGER", nullable: true),
+                    Is_Active = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
+                    Is_Deleted = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
                     Created_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Created_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Created_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Updated_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Updated_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Updated_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Deleted_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Deleted_By = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    Deleted_By = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -328,12 +330,12 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    User_Id = table.Column<decimal>(type: "INTEGER", nullable: false),
-                    Refresh_Token = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    IP = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    User_Agent = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    User_Id = table.Column<int>(type: "INTEGER", nullable: false),
+                    Refresh_Token = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    IP = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
+                    User_Agent = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: true),
                     Created_At = table.Column<DateTime>(type: "DATE", nullable: true),
                     Expired_At = table.Column<DateTime>(type: "DATE", nullable: true)
                 },
@@ -353,13 +355,13 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Role_Id = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Create = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
-                    Read = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
-                    Update = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
-                    Delete = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0")
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Role_Id = table.Column<int>(type: "INTEGER", nullable: true),
+                    Create = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Read = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Update = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Delete = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0")
                 },
                 constraints: table =>
                 {
@@ -377,18 +379,18 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Role_Id = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Menu_Id = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Is_Active = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
-                    Is_Deleted = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Role_Id = table.Column<int>(type: "INTEGER", nullable: true),
+                    Menu_Id = table.Column<int>(type: "INTEGER", nullable: true),
+                    Is_Active = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
+                    Is_Deleted = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
                     Created_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Created_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Created_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Updated_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Updated_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Updated_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Deleted_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Deleted_By = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    Deleted_By = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -430,18 +432,18 @@ namespace Project.WebApi.Entities.Migrations
                 schema: "DBDEV",
                 columns: table => new
                 {
-                    Id = table.Column<decimal>(type: "INTEGER", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    User_Id = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Role_Id = table.Column<decimal>(type: "INTEGER", nullable: true),
-                    Is_Active = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
-                    Is_Deleted = table.Column<bool>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    User_Id = table.Column<int>(type: "INTEGER", nullable: true),
+                    Role_Id = table.Column<int>(type: "INTEGER", nullable: true),
+                    Is_Active = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "1"),
+                    Is_Deleted = table.Column<int>(type: "INTEGER", nullable: true, defaultValueSql: "0"),
                     Created_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Created_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Created_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Updated_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Updated_By = table.Column<decimal>(type: "INTEGER", nullable: true),
+                    Updated_By = table.Column<int>(type: "INTEGER", nullable: true),
                     Deleted_At = table.Column<DateTime>(type: "DATE", nullable: true),
-                    Deleted_By = table.Column<decimal>(type: "INTEGER", nullable: true)
+                    Deleted_By = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -477,6 +479,42 @@ namespace Project.WebApi.Entities.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                schema: "DBDEV",
+                table: "Menus",
+                columns: new[] { "Id", "Code", "Created_At", "Created_By", "Deleted_At", "Deleted_By", "Description", "Icon", "Name", "Order", "Parent_Navigation_Id", "Route", "Updated_At", "Updated_By" },
+                values: new object[] { 1, "CUSTOMER", null, null, null, null, "Customer Management", null, "Customer", 1, null, "/customer", null, null });
+
+            migrationBuilder.InsertData(
+                schema: "DBDEV",
+                table: "Roles",
+                columns: new[] { "Id", "Created_At", "Created_By", "Deleted_At", "Deleted_By", "Description", "Is_Active", "Name", "Order", "Updated_At", "Updated_By" },
+                values: new object[] { 1, null, null, null, null, "Administrator Role", 1, "Admin", 1, null, null });
+
+            migrationBuilder.InsertData(
+                schema: "DBDEV",
+                table: "Users",
+                columns: new[] { "Id", "Created_At", "Created_By", "Deleted_At", "Deleted_By", "Email", "Fullname", "Is_Active", "Is_Deleted", "Last_Access", "Password", "Updated_At", "UpdatedBy", "UpdatedByNavigationId", "Username" },
+                values: new object[] { 1, new DateTime(2024, 11, 4, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, null, null, "anton@gmail.com", "Anton", 1, 0, new DateTime(2024, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), "zImqzO3cO0GZPANlb96bk18UgYq9tB4+hNA+N/QoyzI=", null, null, null, "Anton" });
+
+            migrationBuilder.InsertData(
+                schema: "DBDEV",
+                table: "Role_Grant",
+                columns: new[] { "Id", "Create", "Delete", "Read", "Role_Id", "Update" },
+                values: new object[] { 1, 1, 1, 1, 1, 1 });
+
+            migrationBuilder.InsertData(
+                schema: "DBDEV",
+                table: "Role_Menu",
+                columns: new[] { "Id", "Created_At", "Created_By", "Deleted_At", "Deleted_By", "Is_Active", "Menu_Id", "Role_Id", "Updated_At", "Updated_By" },
+                values: new object[] { 1, null, null, null, null, 1, 1, 1, null, null });
+
+            migrationBuilder.InsertData(
+                schema: "DBDEV",
+                table: "User_Role",
+                columns: new[] { "Id", "Created_At", "Created_By", "Deleted_At", "Deleted_By", "Is_Active", "Role_Id", "Updated_At", "Updated_By", "User_Id" },
+                values: new object[] { 1, null, null, null, null, 1, 1, null, null, 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AuditEntry_AuditId",

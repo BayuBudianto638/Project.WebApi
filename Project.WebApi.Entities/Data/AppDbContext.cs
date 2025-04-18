@@ -4,6 +4,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.Data;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using EncryptionLib.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project.WebApi.Entities.Data
 {
@@ -43,7 +44,7 @@ namespace Project.WebApi.Entities.Data
             if (!optionsBuilder.IsConfigured)
             {
                 var connectionString = _configuration.GetConnectionString("Context");
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseNpgsql(connectionString);
             }
         }
 
@@ -63,8 +64,8 @@ namespace Project.WebApi.Entities.Data
                     .HasColumnType("INTEGER");
                 entity.Property(e => e.ChangeDate).HasColumnType("DATE");
                 entity.Property(e => e.ChangedById).HasColumnType("INTEGER");
-                entity.Property(e => e.NewValue).HasColumnType("nvarchar(max)");
-                entity.Property(e => e.OldValue).HasColumnType("nvarchar(max)");
+                entity.Property(e => e.NewValue).HasColumnType("TEXT");
+                entity.Property(e => e.OldValue).HasColumnType("TEXT");
                 entity.Property(e => e.Operation)
                     .HasMaxLength(255)
                     .IsUnicode(false);
@@ -87,8 +88,8 @@ namespace Project.WebApi.Entities.Data
                 entity.Property(e => e.FieldName)
                     .HasMaxLength(255)
                     .IsUnicode(false);
-                entity.Property(e => e.NewValue).HasColumnType("nvarchar(max)");
-                entity.Property(e => e.OldValue).HasColumnType("nvarchar(max)");
+                entity.Property(e => e.NewValue).HasColumnType("text");
+                entity.Property(e => e.OldValue).HasColumnType("text");
 
                 entity.HasOne(d => d.Audit).WithMany(p => p.AuditEntries)
                     .HasForeignKey(d => d.AuditId)
@@ -475,17 +476,76 @@ namespace Project.WebApi.Entities.Data
             modelBuilder.Entity<User>().HasData(
             new User
             {
-               Id = 1,
-               Username = "Anton",
-               Password = Security.GenerateHashWithSalt("Password1!", "Anton"),
-               Fullname = "Anton",
-               Email = "anton@gmail.com",
-               LastAccess = DateTime.Parse("2024-11-05"),
-               IsActive = true,
-               IsDeleted = false,
-               CreatedAt = DateTime.Parse("2024-11-04"),
-               CreatedBy = 1
+                Id = 1,
+                Username = "Anton",
+                Password = Security.GenerateHashWithSalt("Password1!", "Anton"),
+                Fullname = "Anton",
+                Email = "anton@gmail.com",
+                LastAccess = DateTime.Parse("2024-11-05"),
+                IsActive = true,
+                IsDeleted = false,
+                CreatedAt = DateTime.Parse("2024-11-04"),
+                CreatedBy = 1
             });
+
+            modelBuilder.Entity<Role>().HasData(
+                new Role
+                {
+                    Id = 1,
+                    Name = "Admin",
+                    Description = "Administrator Role",
+                    Order = 1,
+                    IsActive = true
+                }
+            );
+
+            modelBuilder.Entity<Menu>().HasData(
+                new Menu
+                {
+                    Id = 1,
+                    Name = "Customer",
+                    Code = "CUSTOMER",
+                    Description = "Customer Management",
+                    Route = "/customer",
+                    ParentNavigationId = null,
+                    Order = 1
+                }
+            );
+
+            modelBuilder.Entity<UserRole>().HasData(
+                new UserRole
+                {
+                    Id = 1,
+                    UserId = 1,
+                    RoleId = 1,
+                    IsActive = true
+                }
+            );
+
+            modelBuilder.Entity<RoleMenu>().HasData(
+                new RoleMenu
+                {
+                    Id = 1,
+                    RoleId = 1,
+                    MenuId = 1,
+                    IsActive = true
+                }
+            );
+
+            modelBuilder.Entity<RoleGrant>().HasData(
+                new RoleGrant
+                {
+                    Id = 1,
+                    RoleId = 1,
+                    Create = true,
+                    Read = true,
+                    Update = true,
+                    Delete = true
+                }
+            );
+
+            modelBuilder.Entity<Customer>()
+                .HasKey(c => c.CustomerId);
         }
 
         private List<EntityAuditInformation> BeforeSaveChanges()
@@ -547,7 +607,7 @@ namespace Project.WebApi.Entities.Data
                         Audit audit = new()
                         {
                             TableName = item.TableName,
-                            RecordId = entity.Id,
+                            RecordId = GetPrimaryKeyValue(entity),
                             ChangeDate = DateTime.Now,
                             Operation = item.OperationType,
                             AuditEntries = changes,
@@ -562,5 +622,24 @@ namespace Project.WebApi.Entities.Data
             }
             return returnValue;
         }
+
+        private int GetPrimaryKeyValue(object entity)
+        {
+            var type = entity.GetType();
+            var keyProp = type
+                .GetProperties()
+                .FirstOrDefault(p => Attribute.IsDefined(p, typeof(KeyAttribute)));
+
+            if (keyProp == null)
+            {
+                keyProp = type.GetProperties().FirstOrDefault(p => p.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (keyProp == null)
+                throw new Exception($"No key property found on type {type.Name}");
+
+            return (int)keyProp.GetValue(entity)!;
+        }
+
     }
 }
