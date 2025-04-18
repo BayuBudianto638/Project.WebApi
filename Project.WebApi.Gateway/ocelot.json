@@ -1,27 +1,5 @@
 {
   "Routes": [
-    // === CUSTOMER ROUTES ===
-    {
-      "DownstreamPathTemplate": "/api/Customer",
-      "DownstreamScheme": "https",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7060
-        }
-      ],
-      "UpstreamPathTemplate": "/customers",
-      "UpstreamHttpMethod": [ "GET" ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      },
-      "QoSOptions": {
-        "ExceptionsAllowedBeforeBreaking": 3,
-        "DurationOfBreak": 10,
-        "TimeoutValue": 5000
-      }
-    },
     {
       "DownstreamPathTemplate": "/api/Customer",
       "DownstreamScheme": "https",
@@ -144,9 +122,9 @@
       }
     }
 
-    // === USER MANAGEMENT ROUTES HERE ===
+    // USER MANAGEMENT ROUTES HERE
 
-    // === ANY OTHER ROUTES HERE ===
+
 
     // === END AUTH ROUTES ===
   ],
