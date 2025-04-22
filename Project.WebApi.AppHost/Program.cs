@@ -14,4 +14,6 @@ builder.AddProject<Projects.Project_WebApi_Gateway>("project-webapi-gateway");
 
 builder.AddProject<Projects.PalindromeServices>("palindromeservices");
 
+builder.AddProject<Projects.MiniLMService>("minilmservice");
+
 builder.Build().Run();

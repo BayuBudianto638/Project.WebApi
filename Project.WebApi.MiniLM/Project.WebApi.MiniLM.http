@@ -1,0 +1,6 @@
+@Project.WebApi.MiniLM_HostAddress = http://localhost:5008
+
+GET {{Project.WebApi.MiniLM_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
