@@ -16,4 +16,6 @@ builder.AddProject<Projects.PalindromeServices>("palindromeservices");
 
 builder.AddProject<Projects.MiniLMService>("minilmservice");
 
+builder.AddProject<Projects.DocumentOCRService>("documentocrservice");
+
 builder.Build().Run();

@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CustomersServices\CustomersServices.csproj" />
+    <ProjectReference Include="..\DocumentOCRService\DocumentOCRService.csproj" />
     <ProjectReference Include="..\LoginServices\LoginServices.csproj" />
     <ProjectReference Include="..\PalindromeService\PalindromeServices.csproj" />
     <ProjectReference Include="..\Project.WebApi.Entities\Project.WebApi.Entities.csproj" />
