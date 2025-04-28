@@ -54,7 +54,7 @@ namespace Project.WebApi.MiniLM.Services
                     SamplingPipeline = new DefaultSamplingPipeline
                     {
                         RepeatPenalty = 1.0f,
-                        Temperature = 0.1f
+                        Temperature = 0.2f
                     }
                 });
 

@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.WebApi.TestProject"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentOCRService", "DocumentOCRService\DocumentOCRService.csproj", "{C22602BA-073D-5793-8C55-F7C5835B6146}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageRecognitionService", "ImageRecognitionService\ImageRecognitionService.csproj", "{D86477ED-C9A7-AABC-5673-782FFC10F38D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaceRecognitionService", "FaceRecognitionService\FaceRecognitionService.csproj", "{9EFF5481-51D8-D18D-2BC0-C1D508CCCEB7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +103,14 @@ Global
 		{C22602BA-073D-5793-8C55-F7C5835B6146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C22602BA-073D-5793-8C55-F7C5835B6146}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C22602BA-073D-5793-8C55-F7C5835B6146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D86477ED-C9A7-AABC-5673-782FFC10F38D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D86477ED-C9A7-AABC-5673-782FFC10F38D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D86477ED-C9A7-AABC-5673-782FFC10F38D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D86477ED-C9A7-AABC-5673-782FFC10F38D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EFF5481-51D8-D18D-2BC0-C1D508CCCEB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EFF5481-51D8-D18D-2BC0-C1D508CCCEB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EFF5481-51D8-D18D-2BC0-C1D508CCCEB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EFF5481-51D8-D18D-2BC0-C1D508CCCEB7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +125,8 @@ Global
 		{AA9C17EC-3C88-52A2-AB1F-C009697EFECC} = {226BC722-906C-4114-85A6-3726E29BE82E}
 		{590D0F2A-82D6-473F-A942-B59CE7D02F82} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{C22602BA-073D-5793-8C55-F7C5835B6146} = {226BC722-906C-4114-85A6-3726E29BE82E}
+		{D86477ED-C9A7-AABC-5673-782FFC10F38D} = {226BC722-906C-4114-85A6-3726E29BE82E}
+		{9EFF5481-51D8-D18D-2BC0-C1D508CCCEB7} = {226BC722-906C-4114-85A6-3726E29BE82E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5E033007-FAC0-480B-8B56-0E9123A6061B}

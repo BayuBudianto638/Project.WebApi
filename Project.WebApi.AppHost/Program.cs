@@ -18,4 +18,8 @@ builder.AddProject<Projects.MiniLMService>("minilmservice");
 
 builder.AddProject<Projects.DocumentOCRService>("documentocrservice");
 
+builder.AddProject<Projects.ImageRecognitionService>("imagerecognitionservice");
+
+builder.AddProject<Projects.FaceRecognitionService>("facerecognitionservice");
+
 builder.Build().Run();
