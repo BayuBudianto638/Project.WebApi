@@ -1,7 +1,7 @@
 ﻿using LLama.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Project.WebApi.MiniLM.Models;
+using MiniLMService.Models;
 using Project.WebApi.MiniLM.Services;
 
 namespace Project.WebApi.MiniLM.Controllers

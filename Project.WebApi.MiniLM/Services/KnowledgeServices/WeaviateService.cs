@@ -7,12 +7,12 @@ namespace MiniLMService.Services.KnowledgeServices
 {
     public class WeaviateService : IWeaviateService
     {
-        private static readonly HttpClient httpClient = new HttpClient();
+        private static readonly HttpClient httpClient = new();
         private static string _weaviateUrl = "";
 
         public WeaviateService(IConfiguration config)
         {
-            _weaviateUrl = config["WeaviateUrl"];
+            _weaviateUrl = config["WeaviateUrl"] ?? throw new InvalidOperationException("WeaviateUrl is not configured.");
         }
 
         public async Task CreateSchema()
@@ -92,7 +92,7 @@ namespace MiniLMService.Services.KnowledgeServices
             var responseJson = await response.Content.ReadAsStringAsync();
             var result = System.Text.Json.JsonSerializer.Deserialize<QueryResult>(responseJson);
 
-            return result.Data.Get.Book[0].Id;
+            return result!.Data.Get.Book[0].Id;
 
         }
 
@@ -122,7 +122,7 @@ namespace MiniLMService.Services.KnowledgeServices
             var response = await httpClient.PostAsync($"{_weaviateUrl}/graphql", content);
             response.EnsureSuccessStatusCode();
 
-            var responseJson = await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
         }
 
         public async Task<string> QueryWeaviate(string query)
@@ -184,7 +184,7 @@ namespace MiniLMService.Services.KnowledgeServices
             var response = await httpClient.PostAsync($"{_weaviateUrl}/objects", content);
             response.EnsureSuccessStatusCode();
 
-            var responseJson = await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
         }
     }
 }

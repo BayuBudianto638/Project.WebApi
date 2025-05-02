@@ -1,6 +1,6 @@
 ﻿using LLama;
 using LLama.Sampling;
-using Project.WebApi.MiniLM.Models;
+using MiniLMService.Models;
 
 namespace Project.WebApi.MiniLM.Services
 {

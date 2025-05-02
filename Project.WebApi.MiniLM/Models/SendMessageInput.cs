@@ -1,4 +1,4 @@
-﻿namespace Project.WebApi.MiniLM.Models
+﻿namespace MiniLMService.Models
 {
     public class SendMessageInput
     {

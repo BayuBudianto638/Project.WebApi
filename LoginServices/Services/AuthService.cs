@@ -160,7 +160,7 @@ namespace LoginServices.Services
                 var principal = _tokenTool.GetPrincipalFromExpiredToken(data.AccessToken);
                 var principalUsername = principal.Identity?.Name;
 
-                string? principalRole = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
+                string? principalRole = _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.Role);
 
                 User? user = await (
                     from u in _context.Users

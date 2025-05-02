@@ -12,16 +12,12 @@ namespace MiniLMService.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class KnowledgeController : ControllerBase
+    public class KnowledgeController(
+        IWeaviateService weaviateAppService,
+        IFileUploadAppService fileUploadAppService) : ControllerBase
     {
-        private readonly IWeaviateService _weaviateAppService;
-        private readonly IFileUploadAppService _fileUploadAppService;
-
-        public KnowledgeController(IWeaviateService weaviateAppService, IFileUploadAppService fileUploadAppService)
-        {
-            _weaviateAppService = weaviateAppService;
-            _fileUploadAppService = fileUploadAppService;
-        }
+        private readonly IWeaviateService _weaviateAppService = weaviateAppService;
+        private readonly IFileUploadAppService _fileUploadAppService = fileUploadAppService;
 
         // <summary>
         /// Upload Data from CSV
@@ -43,14 +39,14 @@ namespace MiniLMService.Controllers
 
                 foreach (var article in records)
                 {
-                    _weaviateAppService.UploadData(article);
+                    await _weaviateAppService.UploadData(article);
                 }
             }
 
             var uploadedFile = new UploadedFile
             {
                 FileName = file.FileName,
-                createdBy = "User123",
+                CreatedBy = "User123",
                 UploadedAt = DateTime.Now,
                 WeaviateObjectId = "10001"
             };
