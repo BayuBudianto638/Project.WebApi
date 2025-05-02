@@ -9,7 +9,7 @@ namespace EncryptionLib.Helpers
 {
     public class BlowFishHelper
     {
-        RNGCryptoServiceProvider randomSource;
+        RandomNumberGenerator randomSource;
 
         //SBLOCKS
         private uint[] bf_s0;
@@ -38,7 +38,7 @@ namespace EncryptionLib.Helpers
         /// <param name="hexKey">Cipher key as a hex string</param>
         public BlowFishHelper(string hexKey)
         {
-            randomSource = new RNGCryptoServiceProvider();
+            randomSource = RandomNumberGenerator.Create(); 
             SetupKey(HexToByte(hexKey));
         }
 
@@ -48,7 +48,7 @@ namespace EncryptionLib.Helpers
         /// <param name="cipherKey">Cipher key as a byte array</param>
         public BlowFishHelper(byte[] cipherKey)
         {
-            randomSource = new RNGCryptoServiceProvider();
+            randomSource = RandomNumberGenerator.Create();
             SetupKey(cipherKey);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace EncryptionLib.Helpers
 {
@@ -15,7 +16,7 @@ namespace EncryptionLib.Helpers
             // convert this merged value to a byte array
             byte[] saltedHashBytes = Encoding.UTF8.GetBytes(sHashWithSalt);
             // use hash algorithm to compute the hash
-            System.Security.Cryptography.HashAlgorithm algorithm = new System.Security.Cryptography.SHA256Managed();
+            HashAlgorithm algorithm = SHA256.Create();
             // convert merged bytes to a hash as byte array
             byte[] hash = algorithm.ComputeHash(saltedHashBytes);
             // return the has as a base 64 encoded string
